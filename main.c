@@ -95,7 +95,7 @@ void make_window()
     GtkWidget *vbox;
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-    gtk_window_set_default_size(GTK_WINDOW(window), 400, 400);
+    gtk_window_set_default_size(GTK_WINDOW(window), 450, 400);
     gtk_window_set_title(GTK_WINDOW(window), "My Text Editor");
     g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(close_window), NULL);
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
