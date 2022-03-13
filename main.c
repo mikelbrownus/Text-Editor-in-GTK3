@@ -6,7 +6,7 @@ void close_window()
     // check tabs are saved
     gtk_main_quit();
 }
-const int MENU_LIMIT = 7;
+
 void button_click(GtkWidget *button, gpointer data)
 {
     g_print("click");
@@ -30,10 +30,10 @@ void make_menu(GtkWidget *vbox)
         {"Documents", 2, {"Close All", "Save All"}}, 
         {"Help", 2, {"Contents", "About"}}
     };
-
+    int limit = sizeof(menuList) / sizeof(MuButton);
     GtkWidget *menubar = gtk_menu_bar_new();
     int i;
-    for (i = 0; i < MENU_LIMIT; ++i)
+    for (i = 0; i < limit; ++i)
     {
         GtkWidget *item = gtk_menu_item_new_with_label(menuList[i].label);
         GtkWidget *item_menu = gtk_menu_new();
