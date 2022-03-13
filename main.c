@@ -20,7 +20,16 @@ void make_menu(GtkWidget *vbox)
         char sub_menu[6][15];
     } MuButton;
 
-    MuButton menuList[] = {"File", 6, {"New", "Open", "Save", "Save As", "Quit", "Close"}, "Edit", 4, {"Cut", "Copy", "Paste", "Delete"}, "View", 4, {"Full Screen", "Larger Text", "Smaller Text", "Reset"}, "Search", 4, {"Find", "Find Next", "Find Previous", "Replace"}, "Tools", 1, {"Check Spelling"}, "Documents", 2, {"Close All", "Save All"}, "Help", 4, {"Contents", "About"}};
+    MuButton menuList[] = 
+    {
+        {"File", 6, {"New", "Open", "Save", "Save As", "Quit", "Close"}}, 
+        {"Edit", 4, {"Cut", "Copy", "Paste", "Delete"}}, 
+        {"View", 4, {"Full Screen", "Larger Text", "Smaller Text", "Reset"}}, 
+        {"Search", 4, {"Find", "Find Next", "Find Previous", "Replace"}}, 
+        {"Tools", 1, {"Check Spelling"}}, 
+        {"Documents", 2, {"Close All", "Save All"}}, 
+        {"Help", 2, {"Contents", "About"}}
+    };
 
     GtkWidget *menubar = gtk_menu_bar_new();
     int i;
