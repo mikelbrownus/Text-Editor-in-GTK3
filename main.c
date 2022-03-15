@@ -30,18 +30,18 @@ void make_menu(GtkWidget *vbox)
         {"Documents", 2, {"Close All", "Save All"}}, 
         {"Help", 2, {"Contents", "About"}}
     };
-    int limit = sizeof(menuList) / sizeof(MuButton);
+    int mLimit = sizeof(menuList) / sizeof(MuButton);
     GtkWidget *menubar = gtk_menu_bar_new();
     int i;
-    for (i = 0; i < limit; ++i)
+    for (i = 0; i < mLimit; ++i)
     {
         GtkWidget *item = gtk_menu_item_new_with_label(menuList[i].label);
         GtkWidget *item_menu = gtk_menu_new();
         gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
         gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), item_menu);
         int loop;
-        int limit = menuList[i].sub_items;
-        for (loop = 0; loop < limit; ++loop)
+        
+        for (loop = 0; loop < menuList[i].sub_items; ++loop)
         {
             GtkWidget *subitem = gtk_menu_item_new_with_label(menuList[i].sub_menu[loop]);
             g_signal_connect(GTK_WIDGET(subitem), "activate", G_CALLBACK(button_click),
@@ -86,7 +86,6 @@ void make_toolbar(GtkWidget *vbox)
             item = gtk_separator_tool_item_new();
         } else {
             GtkWidget *icon = gtk_image_new_from_file(toollist[i].file_name);
-            //item = gtk_tool_button_new (gtk_image_new_from_icon_name ("document-new", GTK_ICON_SIZE_SMALL_TOOLBAR), NULL);
             item = gtk_tool_button_new(NULL, NULL);
             gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(item), icon);
             gtk_tool_item_set_tooltip_text(item, toollist[i].tooltip);
