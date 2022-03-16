@@ -47,9 +47,9 @@ void make_menu(GtkWidget *vbox)
             g_signal_connect(GTK_WIDGET(subitem), "activate", G_CALLBACK(button_click),
                              menuList[i].sub_menu[loop]);
             gtk_menu_shell_append(GTK_MENU_SHELL(item_menu), subitem);
-        }
-        gtk_container_add(GTK_CONTAINER(vbox), menubar);
+        }  
     }
+    gtk_container_add(GTK_CONTAINER(vbox), menubar);
 }
 
 void make_toolbar(GtkWidget *vbox)
