@@ -1,6 +1,48 @@
 #include <gtk/gtk.h>
 #include <string.h>
 
+typedef struct
+{
+    char *file_name;
+    char *label;
+    char *tooltip;
+} TlButton;
+
+TlButton toollist[] = 
+{
+    {"new.png", "New", "Create new document"},
+    {"open.png", "Open", "Open document"},
+    {"save.png", "Save", "Save document"},
+    {"separator", "0", "0"},
+    {"undo.png", "Undo", "Undo last action"},
+    {"redo.png", "Redo", "Redo last action"},
+    {"separator", "0", "0"},
+    {"copy.png", "Copy", "Copy text"},
+    {"cut.png", "Cut", "Cut text"},
+    {"paste.png", "Paste", "Paste text"},
+    {"separator", "0", "0"},
+    {"search.png", "Search", "Search for text"},
+    {"searchnreplace.png", "Search & Replace", "Search & replace text"}
+};
+
+typedef struct
+{
+    char *label;
+    int sub_items;
+    char sub_menu[6][15];
+} MuButton;
+
+MuButton menuList[] =
+{
+    {"File", 6, {"New", "Open", "Save", "Save As", "Quit", "Close"}},
+    {"Edit", 4, {"Cut", "Copy", "Paste", "Delete"}},
+    {"View", 4, {"Full Screen", "Larger Text", "Smaller Text", "Reset"}},
+    {"Search", 4, {"Find", "Find Next", "Find Previous", "Replace"}},
+    {"Tools", 1, {"Check Spelling"}},
+    {"Documents", 2, {"Close All", "Save All"}},
+    {"Help", 2, {"Contents", "About"}}
+};
+
 GtkWidget *notebook;
 void close_window()
 {
@@ -10,12 +52,7 @@ void close_window()
 
 void close_tab()
 {
-    g_print("close tab called");
-}
-
-void button_click(GtkWidget *button, gpointer data)
-{
-    g_print("click");
+    
 }
 
 void add_tab(char *name)
@@ -38,6 +75,14 @@ void add_tab(char *name)
     gtk_widget_show_all(scrollwindow);
 }
 
+void button_click(GtkWidget *button, gpointer data)
+{
+    char *btn = (char*)data;
+    if(strcmp(btn, "New") == 0){
+        add_tab("New Tab");
+    }
+}
+
 void make_notebook(GtkWidget *vbox)
 {
     notebook = gtk_notebook_new();
@@ -47,22 +92,7 @@ void make_notebook(GtkWidget *vbox)
 
 void make_menu(GtkWidget *vbox)
 {
-    typedef struct
-    {
-        char *label;
-        int sub_items;
-        char sub_menu[6][15];
-    } MuButton;
-
-    MuButton menuList[] =
-        {
-            {"File", 6, {"New", "Open", "Save", "Save As", "Quit", "Close"}},
-            {"Edit", 4, {"Cut", "Copy", "Paste", "Delete"}},
-            {"View", 4, {"Full Screen", "Larger Text", "Smaller Text", "Reset"}},
-            {"Search", 4, {"Find", "Find Next", "Find Previous", "Replace"}},
-            {"Tools", 1, {"Check Spelling"}},
-            {"Documents", 2, {"Close All", "Save All"}},
-            {"Help", 2, {"Contents", "About"}}};
+    
     int mLimit = sizeof(menuList) / sizeof(MuButton);
     GtkWidget *menubar = gtk_menu_bar_new();
     int i;
@@ -76,9 +106,9 @@ void make_menu(GtkWidget *vbox)
 
         for (loop = 0; loop < menuList[i].sub_items; ++loop)
         {
-            GtkWidget *subitem = gtk_menu_item_new_with_label(menuList[i].sub_menu[loop]);
-            g_signal_connect(GTK_WIDGET(subitem), "activate", G_CALLBACK(button_click),
-                             menuList[i].sub_menu[loop]);
+            char *theLabel = menuList[i].sub_menu[loop];
+            GtkWidget *subitem = gtk_menu_item_new_with_label(theLabel);
+            g_signal_connect(GTK_WIDGET(subitem), "activate", G_CALLBACK(button_click), theLabel);
             gtk_menu_shell_append(GTK_MENU_SHELL(item_menu), subitem);
         }
     }
@@ -87,26 +117,7 @@ void make_menu(GtkWidget *vbox)
 
 void make_toolbar(GtkWidget *vbox)
 {
-    typedef struct
-    {
-        char *file_name;
-        char *label;
-        char *tooltip;
-    } TlButton;
-    TlButton toollist[] = {
-        {"new.png", "New", "Create new document"},
-        {"open.png", "Open", "Open document"},
-        {"save.png", "Save", "Save document"},
-        {"separator", "0", "0"},
-        {"undo.png", "Undo", "Undo last action"},
-        {"redo.png", "Redo", "Redo last action"},
-        {"separator", "0", "0"},
-        {"copy.png", "Copy", "Copy text"},
-        {"cut.png", "Cut", "Cut text"},
-        {"paste.png", "Paste", "Paste text"},
-        {"separator", "0", "0"},
-        {"search.png", "Search", "Search for text"},
-        {"searchnreplace.png", "Search & Replace", "Search & replace text"}};
+    
     int tLimit = sizeof(toollist) / sizeof(TlButton);
     GtkWidget *toolbar = gtk_toolbar_new();
     GtkToolItem *item;
