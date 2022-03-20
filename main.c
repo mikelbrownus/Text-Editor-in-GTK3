@@ -50,9 +50,10 @@ void close_window()
     gtk_main_quit();
 }
 
-void close_tab()
+void close_tab(GtkWidget *button, gpointer data)
 {
-    
+    int page_number = gtk_notebook_page_num(GTK_NOTEBOOK(notebook), data);
+    gtk_notebook_remove_page(GTK_NOTEBOOK(notebook), page_number);
 }
 
 void add_tab(char *name)
@@ -66,11 +67,11 @@ void add_tab(char *name)
     gtk_widget_set_tooltip_text(button, "Close tab");
     gtk_box_pack_start(GTK_BOX(label), text, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(label), button, FALSE, FALSE, 0);
-    g_signal_connect(GTK_WIDGET(button), "clicked", G_CALLBACK(close_tab),
-                     NULL);
     GtkWidget *scrollwindow = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(scrollwindow), textview);
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), scrollwindow, label);
+    g_signal_connect(GTK_WIDGET(button), "clicked", G_CALLBACK(close_tab),
+                     scrollwindow);
     gtk_widget_show_all(label);
     gtk_widget_show_all(scrollwindow);
 }
