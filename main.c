@@ -76,11 +76,44 @@ void add_tab(char *name)
     gtk_widget_show_all(scrollwindow);
 }
 
+void open_file(char *file_address)
+{
+    g_print("%s\n", file_address);
+}
+
+void open_file_dialog()
+{
+    GtkWidget *open_dialog;
+    int result;
+    open_dialog = gtk_file_chooser_dialog_new("Open File",
+                                                NULL,
+                                                GTK_FILE_CHOOSER_ACTION_OPEN,
+                                                "Cancel",
+                                                GTK_RESPONSE_CANCEL,
+                                                "Open",
+                                                GTK_RESPONSE_ACCEPT,
+                                                NULL);
+    result = gtk_dialog_run(GTK_DIALOG(open_dialog));
+    if(result == GTK_RESPONSE_ACCEPT)
+    {
+        char *file_address;
+        GtkFileChooser *chooser = GTK_FILE_CHOOSER(open_dialog);
+        file_address = gtk_file_chooser_get_filename(chooser);
+        open_file(file_address);
+        free(file_address);
+        gtk_widget_destroy(open_dialog);
+    } else if(result == GTK_RESPONSE_CANCEL) {
+        gtk_widget_destroy(open_dialog);
+    }
+}
+
 void button_click(GtkWidget *button, gpointer data)
 {
     char *btn = (char*)data;
     if(strcmp(btn, "New") == 0){
         add_tab("New Tab");
+    } else if(strcmp(btn, "Open") == 0) {
+        open_file_dialog();
     }
 }
 
