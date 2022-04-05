@@ -3,6 +3,18 @@
 
 typedef struct
 {
+    GtkWidget *text;
+    GtkWidget *address;
+    GtkTextBuffer *buff;
+    gboolean saved;
+} PgID;
+
+const int page_limit = 10;
+
+PgID *book;
+
+typedef struct
+{
     char *file_name;
     char *label;
     char *tooltip;
@@ -46,35 +58,86 @@ MuButton menuList[] =
 GtkWidget *notebook;
 void close_window()
 {
-    // check tabs are saved
+    free(book);
     gtk_main_quit();
 }
 
 void close_tab(GtkWidget *button, gpointer data)
 {
     int page_number = gtk_notebook_page_num(GTK_NOTEBOOK(notebook), data);
+    g_print("closing page: %d\n", page_number);
     gtk_notebook_remove_page(GTK_NOTEBOOK(notebook), page_number);
+}
+
+char* name_from_address(char* address)
+{
+    return strrchr(address, '/');
 }
 
 void add_tab(char *name)
 {
-    GtkWidget *textview = gtk_text_view_new();
-    GtkWidget *text = gtk_label_new(name);
+    int number_of_pages = gtk_notebook_get_n_pages(GTK_NOTEBOOK(notebook));
+    if(number_of_pages == page_limit){
+        return;
+    }
     GtkWidget *label = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     GtkWidget *icon = gtk_image_new_from_file("close.png");
     GtkWidget *button = gtk_button_new();
     gtk_button_set_image(GTK_BUTTON(button), icon);
     gtk_widget_set_tooltip_text(button, "Close tab");
-    gtk_box_pack_start(GTK_BOX(label), text, TRUE, TRUE, 0);
+
+    GtkWidget *textview = gtk_text_view_new();
+    book[number_of_pages].text = gtk_label_new(name_from_address(name));
+    book[number_of_pages].address = gtk_label_new(name);
+    book[number_of_pages].buff = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
+     
+    
+    gtk_box_pack_start(GTK_BOX(label), book[number_of_pages].text, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(label), book[number_of_pages].address, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(label), button, FALSE, FALSE, 0);
     GtkWidget *scrollwindow = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(scrollwindow), textview);
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), scrollwindow, label);
     g_signal_connect(GTK_WIDGET(button), "clicked", G_CALLBACK(close_tab),
                      scrollwindow);
-    gtk_widget_show_all(label);
+    gtk_widget_show(button);
+    gtk_widget_show(book[number_of_pages].text);
     gtk_widget_show_all(scrollwindow);
 }
+void save_file(char *file_address)
+{
+    g_print("%s\n", file_address);
+}
+
+void save_as_dialog()
+{
+    GtkWidget *save_dialog;
+    int result;
+    save_dialog = gtk_file_chooser_dialog_new("Save As",
+                                                NULL,
+                                                GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                "Cancel",
+                                                GTK_RESPONSE_CANCEL,
+                                                "Save",
+                                                GTK_RESPONSE_ACCEPT,
+                                                NULL);
+    GtkFileChooser *chooser = GTK_FILE_CHOOSER(save_dialog);
+    gtk_file_chooser_set_do_overwrite_confirmation(chooser, TRUE);
+    result = gtk_dialog_run(GTK_DIALOG(save_dialog));
+    if(result == GTK_RESPONSE_ACCEPT)
+    {
+        char *file_address;
+        
+        file_address = gtk_file_chooser_get_filename(chooser);
+        save_file(file_address);
+        free(file_address);
+        gtk_widget_destroy(save_dialog);
+    } else if(result == GTK_RESPONSE_CANCEL) {
+        gtk_widget_destroy(save_dialog);
+    }
+}
+
+
 
 void open_file(char *file_address)
 {
@@ -111,9 +174,13 @@ void button_click(GtkWidget *button, gpointer data)
 {
     char *btn = (char*)data;
     if(strcmp(btn, "New") == 0){
-        add_tab("New Tab");
+        add_tab("/New");
     } else if(strcmp(btn, "Open") == 0) {
         open_file_dialog();
+    } else if(strcmp(btn, "Save As") == 0) {
+        save_as_dialog();
+    } else if(strcmp(btn, "Save") == 0) {
+        save_file(NULL);
     }
 }
 
@@ -121,7 +188,7 @@ void make_notebook(GtkWidget *vbox)
 {
     notebook = gtk_notebook_new();
     gtk_box_pack_start(GTK_BOX(vbox), notebook, TRUE, TRUE, 0);
-    add_tab("untitled");
+    add_tab("/untitled");
 }
 
 void make_menu(GtkWidget *vbox)
@@ -196,6 +263,7 @@ void make_window()
 
 int main(int argc, char **argv)
 {
+    book = (PgID*)malloc(sizeof(PgID) * (page_limit + 1));
     gtk_init(&argc, &argv);
     make_window();
     gtk_main();
